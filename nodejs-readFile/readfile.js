@@ -2,8 +2,10 @@
  * Created by iceli on 15/7/28.
  */
 var request = require('request'),
-    urlparse = require('url').parse,
+    url = require('url'),
+    urlparse = url.parse,
     fs = require("fs"),
+    path = require("path"),
     http = require('http');
 
 var getImg = {
@@ -16,7 +18,7 @@ var getImg = {
     /**
      * 下载远程文件
      * @param url 文件地址
-     * @param dirname 本地保存文件路径 TODO: 指定路径
+     * @param dirname 本地保存文件路径
      * @param cb 下载完成后的回调
      */
     downFile: function (url, dirname, cb) {
@@ -46,10 +48,10 @@ var getImg = {
     parseSrc: function (file) {
         var that = this;
         that.files = [];
-
-        fs.readFile(file, 'utf-8', function (err, data) {
+        // why?
+        fs.readFile(file, {encoding:'utf8',flag:'r'}, function (err, data) {
             var r = data.match(/url\(([^\(\)]+)\)/ig);
-            var body = err + '<br/>' + data + '<br/>';
+            var body = '<h1>' + err + '</h1><br/>' + data + '<br/>';
             var tmp = {};
             //去重
             console.log(r.length);
@@ -62,11 +64,10 @@ var getImg = {
             });
             console.log(that.files.length);
             that.files.forEach(function (imgSrc, index) {
-                var imgPath = /^https?/.test(imgSrc) ? imgSrc : // http(s) 开头直接引用
-                    /^\//.test(imgSrc) ? that.urlInfo.protocol + '//' + that.urlInfo.host + imgSrc : // '/a/b.jpg' 斜杠开头的相对于根目录
-                        /^data:image\/\w+;base64,/.test(imgSrc) ? imgSrc :
-                        that.filePath + imgSrc;
+                var imgPath = /(^https?) | (^data:image\/\w+;base64,)/.test(imgSrc) ? imgSrc : // http(s) 开头直接引用
+                        url.resolve(that.filePath, imgSrc); // fix '../' && './
 
+                console.log(imgPath);
                 // TODO: 保存base64图片
                 !/^data:image\/\w+;base64,/.test(imgPath) && that.downFile(imgPath, './download/'); // TODO: img目录
                 body += index + ': ' + imgPath + '<img src="' + imgPath + '"/><br/>';
