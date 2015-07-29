@@ -36,9 +36,15 @@ var getImg = {
 
         cb && (this.file = downFileDir);
 
-        request(url).pipe(fs.createWriteStream(downFileDir).on('drain', function () {
-            cb && that.parseSrc(downFileDir);
-        }));
+        request
+            .get(url)
+            .on('response', function(response) {
+                cb && that.parseSrc(downFileDir);
+            })
+            .pipe(request.put(url));
+        //request(url).pipe(fs.createWriteStream(downFileDir).on('drain', function () {
+        //    cb && that.parseSrc(downFileDir);
+        //}));
     },
     /**
      * 解析css文件
