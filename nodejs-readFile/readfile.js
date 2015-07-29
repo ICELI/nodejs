@@ -8,22 +8,30 @@ var request = require('request'),
 
 var getImg = {
     init: function(url) {
-        this.url = url; // cssÂ·¾¶
-        this.filePath = this.url.substring(0, this.url.lastIndexOf('/') + 1); // cssÎÄ¼şÂ·¾¶
-        this.downFile(url, '', true);
+        this.url = url; // cssè·¯å¾„
+        this.urlInfo = urlparse(url);
+        this.filePath = this.url.substring(0, this.url.lastIndexOf('/') + 1); // cssæ–‡ä»¶è·¯å¾„
+        this.downFile(url, './download/', true);
     },
     /**
-     * ÏÂÔØÔ¶³ÌÎÄ¼ş
-     * @param url ÎÄ¼şµØÖ·
-     * @param dirname ±¾µØ±£´æÎÄ¼şÂ·¾¶ TODO
-     * @param cb ÏÂÔØÍê³ÉºóµÄ»Øµ÷
+     * ä¸‹è½½è¿œç¨‹æ–‡ä»¶
+     * @param url æ–‡ä»¶åœ°å€
+     * @param dirname æœ¬åœ°ä¿å­˜æ–‡ä»¶è·¯å¾„ TODO: æŒ‡å®šè·¯å¾„
+     * @param cb ä¸‹è½½å®Œæˆåçš„å›è°ƒ
      */
     downFile: function(url, dirname, cb) {
         var that = this;
         var urlInfo  = urlparse(url);
-        console.log(urlInfo);
         var fileName  = urlInfo.pathname.split('/').pop();
         var downFileDir = dirname + fileName;
+
+        // åˆ›å»ºæ–‡ä»¶ä¿å­˜ç›®å½•
+        if (!fs.existsSync(dirname)) {
+            fs.mkdirSync(dirname);
+            console.log('ç›®å½•åˆ›å»ºæˆåŠŸ');
+        } else {
+            //console.log('ç›®å½•å·²å­˜åœ¨');
+        }
 
         cb && (this.file = downFileDir);
 
@@ -32,8 +40,8 @@ var getImg = {
         }));
     },
     /**
-     * ½âÎöcssÎÄ¼ş
-     * @param file ±£´æµ½±¾µØµÄcssÎÄ¼ş
+     * è§£æcssæ–‡ä»¶
+     * @param file ä¿å­˜åˆ°æœ¬åœ°çš„cssæ–‡ä»¶
      */
     parseSrc: function(file) {
         var that = this;
@@ -41,20 +49,27 @@ var getImg = {
 
         fs.readFile(file, 'utf-8', function (err, data) {
             var r = data.match(/url\(([^\(\)]+)\)/ig);
-            var body = '';
+            var body = data;
             var tmp = {};
-            //È¥ÖØ
+            //å»é‡
+            console.log(r.length);
             r.forEach(function (item, index, a) {
                 var imgSrc = item.replace(/(url\(['"]?)|(['"]?\))/ig, '');
-                if(!tmp[item]) {
-                    tmp[item] = 1;
+                if(!tmp[imgSrc]) {
+                    tmp[imgSrc] = 1;
                     that.files.push(imgSrc);
                 }
             });
-
+            console.log(that.files.length);
             that.files.forEach(function(imgSrc, index){
-                that.downFile(that.filePath + imgSrc, '');
-                body += index + ': ' + imgSrc + '<img src="'+ that.filePath + imgSrc + '"/><br/>';
+                var imgPath = /^https?/.test(imgSrc) ? imgSrc : // http(s) å¼€å¤´ç›´æ¥å¼•ç”¨
+                        /^\//.test(imgSrc) ? that.urlInfo.protocol + '//' + that.urlInfo.host + imgSrc : // '/a/b.jpg' æ–œæ å¼€å¤´çš„ç›¸å¯¹äºæ ¹ç›®å½•
+                        /^data:image\/\w+;base64,/.test(imgSrc) ? imgSrc :
+                        that.filePath + imgSrc;
+
+                // TODO: ä¿å­˜base64å›¾ç‰‡
+                !/^data:image\/\w+;base64,/.test(imgPath) && that.downFile(imgPath, './download/');
+                body += index + ': ' + imgPath + '<img src="'+ imgPath + '"/><br/>';
             });
 
             var header = '<!DOCTYPE html>' +
@@ -71,7 +86,7 @@ var getImg = {
         });
     },
     /**
-     * Æô¶¯·şÎñ ÏÔÊ¾Í¼Æ¬ÁĞ±í
+     * å¯åŠ¨æœåŠ¡ æ˜¾ç¤ºå›¾ç‰‡åˆ—è¡¨
      * @param html
      */
     server: function(html){
@@ -82,5 +97,6 @@ var getImg = {
         console.log('Server running at http://127.0.0.1:1337/');
     }
 };
-// »ñÈ¡cssÎÄ¼şËù°üº¬µÄÍ¼Æ¬
+// è·å–cssæ–‡ä»¶æ‰€åŒ…å«çš„å›¾ç‰‡
+//getImg.init('http://img1.cache.netease.com/utf8/3g/touch/20150727151246/styles/index.css');
 getImg.init('http://www.maisulang.com/dsw/front/css/index.css?V2.1');
