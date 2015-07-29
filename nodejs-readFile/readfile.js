@@ -42,9 +42,6 @@ var getImg = {
                 cb && that.parseSrc(downFileDir);
             })
             .pipe(request.put(url));
-        //request(url).pipe(fs.createWriteStream(downFileDir).on('drain', function () {
-        //    cb && that.parseSrc(downFileDir);
-        //}));
     },
     /**
      * 解析css文件
