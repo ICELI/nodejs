@@ -7,7 +7,7 @@ var request = require('request'),
     http = require('http');
 
 var getImg = {
-    init: function(url) {
+    init: function (url) {
         this.url = url; // css路径
         this.urlInfo = urlparse(url);
         this.filePath = this.url.substring(0, this.url.lastIndexOf('/') + 1); // css文件路径
@@ -19,10 +19,10 @@ var getImg = {
      * @param dirname 本地保存文件路径 TODO: 指定路径
      * @param cb 下载完成后的回调
      */
-    downFile: function(url, dirname, cb) {
+    downFile: function (url, dirname, cb) {
         var that = this;
-        var urlInfo  = urlparse(url);
-        var fileName  = urlInfo.pathname.split('/').pop();
+        var urlInfo = urlparse(url);
+        var fileName = urlInfo.pathname.split('/').pop();
         var downFileDir = dirname + fileName;
 
         // 创建文件保存目录
@@ -35,7 +35,7 @@ var getImg = {
 
         cb && (this.file = downFileDir);
 
-        request(url).pipe(fs.createWriteStream(downFileDir).on('drain', function() {
+        request(url).pipe(fs.createWriteStream(downFileDir).on('drain', function () {
             cb && that.parseSrc(downFileDir);
         }));
     },
@@ -43,33 +43,33 @@ var getImg = {
      * 解析css文件
      * @param file 保存到本地的css文件
      */
-    parseSrc: function(file) {
+    parseSrc: function (file) {
         var that = this;
         that.files = [];
 
         fs.readFile(file, 'utf-8', function (err, data) {
             var r = data.match(/url\(([^\(\)]+)\)/ig);
-            var body = data;
+            var body = err + '<br/>' + data + '<br/>';
             var tmp = {};
             //去重
             console.log(r.length);
             r.forEach(function (item, index, a) {
                 var imgSrc = item.replace(/(url\(['"]?)|(['"]?\))/ig, '');
-                if(!tmp[imgSrc]) {
+                if (!tmp[imgSrc]) {
                     tmp[imgSrc] = 1;
                     that.files.push(imgSrc);
                 }
             });
             console.log(that.files.length);
-            that.files.forEach(function(imgSrc, index){
+            that.files.forEach(function (imgSrc, index) {
                 var imgPath = /^https?/.test(imgSrc) ? imgSrc : // http(s) 开头直接引用
-                        /^\//.test(imgSrc) ? that.urlInfo.protocol + '//' + that.urlInfo.host + imgSrc : // '/a/b.jpg' 斜杠开头的相对于根目录
+                    /^\//.test(imgSrc) ? that.urlInfo.protocol + '//' + that.urlInfo.host + imgSrc : // '/a/b.jpg' 斜杠开头的相对于根目录
                         /^data:image\/\w+;base64,/.test(imgSrc) ? imgSrc :
                         that.filePath + imgSrc;
 
                 // TODO: 保存base64图片
-                !/^data:image\/\w+;base64,/.test(imgPath) && that.downFile(imgPath, './download/');
-                body += index + ': ' + imgPath + '<img src="'+ imgPath + '"/><br/>';
+                !/^data:image\/\w+;base64,/.test(imgPath) && that.downFile(imgPath, './download/'); // TODO: img目录
+                body += index + ': ' + imgPath + '<img src="' + imgPath + '"/><br/>';
             });
 
             var header = '<!DOCTYPE html>' +
@@ -82,6 +82,7 @@ var getImg = {
             var footer = '<script src="http://cdn.bootcss.com/jquery/1.11.2/jquery.min.js"></script>' +
                 '<script src="http://cdn.bootcss.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>' +
                 '</body></html>';
+
             that.server(header + body + footer);
         });
     },
@@ -89,7 +90,7 @@ var getImg = {
      * 启动服务 显示图片列表
      * @param html
      */
-    server: function(html){
+    server: function (html) {
         http.createServer(function (req, res) {
             res.writeHead(200, {'Content-Type': 'text/html;charset=utf-8'});
             res.end(html);
