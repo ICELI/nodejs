@@ -11,7 +11,6 @@ var request = require('request'),
 var getImg = {
     init: function (url) {
         this.url = url; // css路径
-        this.urlInfo = urlparse(url);
         this.filePath = this.url.substring(0, this.url.lastIndexOf('/') + 1); // css文件路径
         this.downFile(url, './download/', true);
     },
