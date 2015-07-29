@@ -1,0 +1,17 @@
+{
+  "name": "getimage",
+  "version": "1.0.0",
+  "description": "获取图片",
+  "main": "readfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "image"
+  ],
+  "author": "iceli",
+  "license": "ISC",
+  "devDependencies": {
+    "request": "^2.60.0"
+  }
+}
