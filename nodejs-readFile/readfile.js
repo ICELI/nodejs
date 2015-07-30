@@ -8,6 +8,8 @@ var request = require('request'),
     path = require("path"),
     http = require('http');
 
+var i = 0;
+
 var getImg = {
     init: function (url) {
         this.url = url; // css路径
@@ -36,12 +38,11 @@ var getImg = {
 
         cb && (this.file = downFileDir);
 
-        request
-            .get(url)
-            .on('response', function(response) {
-                cb && that.parseSrc(downFileDir);
-            })
-            .pipe(request.put(url));
+        //返回 fs.createReadStream(url) 流
+        request(url).on('end', function() {
+            cb && that.parseSrc(downFileDir);
+            console.log('下载' + i++, fileName);
+        }).pipe(fs.createWriteStream(downFileDir));
     },
     /**
      * 解析css文件
