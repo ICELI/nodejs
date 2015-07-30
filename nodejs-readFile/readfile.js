@@ -67,8 +67,7 @@ var getImg = {
             });
             console.log(that.files.length);
             that.files.forEach(function (imgSrc, index) {
-                var imgPath = /(^https?) | (^data:image\/\w+;base64,)/.test(imgSrc) ? imgSrc : // http(s) 开头直接引用
-                        url.resolve(that.filePath, imgSrc); // fix '../' && './
+                var imgPath = url.resolve(that.filePath, imgSrc); // fix '../' && './ && ^http(s)
 
                 console.log(imgPath);
                 // TODO: 保存base64图片
@@ -103,5 +102,4 @@ var getImg = {
     }
 };
 // 获取css文件所包含的图片
-//getImg.init('http://img1.cache.netease.com/utf8/3g/touch/20150727151246/styles/index.css');
-getImg.init('http://www.maisulang.com/dsw/front/css/index.css?V2.1');
+getImg.init('http://img1.cache.netease.com/utf8/3g/touch/20150727151246/styles/index.css');
