@@ -5,10 +5,9 @@ var request = require('request'),
     url = require('url'),
     urlparse = url.parse,
     fs = require("fs"),
-    path = require("path"),
     http = require('http');
 
-var i = 0;
+var i = 0; // 下载文件计数
 
 var getImg = {
     init: function (url) {
