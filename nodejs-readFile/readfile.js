@@ -51,7 +51,7 @@ var getImg = {
     parseSrc: function (file) {
         var that = this;
         that.files = [];
-        // why?
+
         fs.readFile(file, {encoding:'utf8',flag:'r'}, function (err, data) {
             var r = data.match(/url\(([^\(\)]+)\)/ig);
             var body = '<h1>' + err + '</h1><br/>' + data + '<br/>';
