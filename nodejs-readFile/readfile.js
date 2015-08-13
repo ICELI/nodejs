@@ -37,11 +37,28 @@ var getImg = {
 
         cb && (this.file = downFileDir);
 
-        //返回 fs.createReadStream(url) 流
-        request(url).on('end', function() {
-            cb && that.parseSrc(downFileDir);
-            console.log('下载' + i++, fileName);
-        }).pipe(fs.createWriteStream(downFileDir));
+        // base64图片下载
+        if(/^data:image\/\w+;base64,/.test(url)) {
+            var base64Data = url.replace(/^data:image\/\w+;base64,/, "");
+            var dataBuffer = new Buffer(base64Data, 'base64');
+            var tmp = Date.now();
+            var tmpName = Math.ceil(Math.random() * tmp).toString(36) + ".png";
+
+            fs.writeFile(dirname + tmpName, dataBuffer, function(err) {
+                if(err){
+                    console.log(err);
+                }else{
+                    console.log('下载' + i++ + ' ' +tmpName + ' base64');
+                }
+            });
+
+        } else {
+            //返回 fs.createReadStream(url) 流
+            request(url).on('end', function() {
+                cb && that.parseSrc(downFileDir);
+                console.log('下载' + i++, fileName);
+            }).pipe(fs.createWriteStream(downFileDir));
+        }
     },
     /**
      * 解析css文件
@@ -66,11 +83,9 @@ var getImg = {
             });
             console.log(that.files.length);
             that.files.forEach(function (imgSrc, index) {
-                var imgPath = url.resolve(that.filePath, imgSrc); // fix '../' && './ && ^http(s)
+                var imgPath = url.resolve(that.filePath, imgSrc); // fix '../' && './' && /^http(s)/
 
-                console.log(imgPath);
-                // TODO: 保存base64图片
-                !/^data:image\/\w+;base64,/.test(imgPath) && that.downFile(imgPath, './download/'); // TODO: img目录
+                that.downFile(imgPath, './download/'); // TODO: img目录
                 body += index + ': ' + imgPath + '<img src="' + imgPath + '"/><br/>';
             });
 
