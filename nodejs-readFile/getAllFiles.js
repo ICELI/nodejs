@@ -5,7 +5,7 @@
  */
 
 var fs = require('fs');
-var root_path = process.argv[2]; // 命令行后第三个参数
+var root_path = process.argv[2]; // 命令行第三个参数
 var w_file = 'res.lst';
 
 function getAllFiles(root) {
