@@ -10,8 +10,8 @@ learn nodejs
 
 ###getAllFiles.js 遍历文件夹获取所有文件列表
 * 遍历当前文件夹获取文件列表
-	`getAllFiles(root)`
+	`getAllFiles(root)` `fs.readdirSync(root)`
 * 若子文件不是文件夹，则返回目录
-	`!stat.isDirectory()`
+	`!stat.isDirectory()` `pathname`
 * 若子文件是文件夹，则遍历文件夹
 	`stat.isDirectory()` `getAllFiles(pathname)`
