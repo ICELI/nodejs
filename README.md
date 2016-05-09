@@ -9,6 +9,9 @@ learn nodejs
 * 获取图片保存到本地，相对css文件创建文件夹
 
 ###getAllFiles.js 遍历文件夹获取所有文件列表
-* 遍历当前文件夹
-* 非文件夹即为文件直接返回目录
-* 文件夹继续遍历该文件夹
+* 遍历当前文件夹获取文件列表
+	`getAllFiles(root)`
+* 若子文件不是文件夹，则返回目录
+	`!stat.isDirectory()`
+* 若子文件是文件夹，则遍历文件夹
+	`stat.isDirectory()` `getAllFiles(pathname)`
