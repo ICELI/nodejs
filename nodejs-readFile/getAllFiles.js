@@ -1,11 +1,11 @@
 /**
  * Created by iceli on 2016/5/5.
- * 打开命令行工具，进入getAllFiles.js所在目录，输入：node getAllFiles.js '这里为你要统计的目标文件夹的目录'
+ * 鎵撳紑鍛戒护琛屽伐鍏凤紝杩涘叆getAllFiles.js鎵�鍦ㄧ洰褰曪紝杈撳叆锛歯ode getAllFiles.js '杩欓噷涓轰綘瑕佺粺璁＄殑鐩爣鏂囦欢澶圭殑鐩綍'
  * node getAllFiles.js ../
  */
 
 var fs = require('fs');
-var root_path = process.argv[2]; // 命令行第三个参数
+var root_path = process.argv[2]; // 鍛戒护琛岀涓変釜鍙傛暟
 var w_file = 'res.lst';
 
 function getAllFiles(root) {
