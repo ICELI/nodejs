@@ -1,0 +1,3 @@
+[submodule "nodejs-marked"]
+	path = nodejs-marked
+	url = git://github.com/iceli/nodejs-marked.git
