@@ -38,4 +38,4 @@ fs.readFile(root_path + w_file, function (err, data) {
             if (e) throw e;
         })
     }
-})
+});
