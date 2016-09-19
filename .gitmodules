@@ -1,3 +1,6 @@
 [submodule "nodejs-marked"]
 	path = nodejs-marked
 	url = git://github.com/iceli/nodejs-marked.git
+[submodule "nodejs-cli"]
+	path = nodejs-cli
+	url = git://github.com/iceli/jm-cli.git
