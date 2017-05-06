@@ -4,3 +4,6 @@
 [submodule "nodejs-cli"]
 	path = nodejs-cli
 	url = https://github.com/ICELI/jm-cli.git
+[submodule "nodejs-xlsx"]
+	path = nodejs-xlsx
+	url = https://github.com/ICELI/nodejs-xlsx.git
